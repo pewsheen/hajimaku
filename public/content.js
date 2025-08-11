@@ -42,7 +42,7 @@ recognition.onresult = async function (event) {
 };
 
 recognition.onend = function () {
-  console.log('Speech recognition ended');
+  console.log('[Hajimaku] Speech recognition ended');
   setTimeout(() => {
     recognition.abort();
     recognition.start();
@@ -53,10 +53,17 @@ recognition.onend = function () {
 
 const recordBtn = createRecordButtonElement();
 recordBtn.addEventListener('click', () => {
-  console.log('Start recording...');
+  console.log('[Hajimaku] Start regcognizing...');
   recognition.start();
 });
-document.body.appendChild(recordBtn);
+const controlPanelEl = document.getElementsByClassName(
+  'ytp-chrome-controls'
+)[0];
+if (controlPanelEl) {
+  controlPanelEl.appendChild(recordBtn);
+} else {
+  document.body.appendChild(recordBtn);
+}
 
 function createTranscripElement() {
   const transcriptEl = document.createElement('div');
@@ -65,7 +72,7 @@ function createTranscripElement() {
   transcriptEl.style.bottom = '51px'; // above the video's controls
   transcriptEl.style.left = '0';
   transcriptEl.style.textAlign = 'center';
-  transcriptEl.style.backgroundColor = 'rgba(0, 0, 0, 0.5)';
+  transcriptEl.style.background = 'transparent';
   transcriptEl.style.color = 'white';
   transcriptEl.style.padding = '10px';
   transcriptEl.style.zIndex = '9999';
@@ -79,16 +86,20 @@ function createTranscripElement() {
 function createRecordButtonElement() {
   const recordBtn = document.createElement('button');
   recordBtn.textContent = 'Start Recording';
-  recordBtn.style.position = 'fixed';
-  recordBtn.style.bottom = '20px';
-  recordBtn.style.right = '20px';
+  recordBtn.style.position = 'relative';
+  recordBtn.style.height = '100%';
+  recordBtn.style.width = '48px';
   recordBtn.style.zIndex = '9999';
-  recordBtn.style.padding = '10px 20px';
-  recordBtn.style.background = '#1976d2';
+  recordBtn.style.padding = '0 2px';
+  recordBtn.style.background = 'transparent';
   recordBtn.style.color = '#fff';
   recordBtn.style.border = 'none';
-  recordBtn.style.borderRadius = '5px';
   recordBtn.style.cursor = 'pointer';
+  recordBtn.style.boxSizing = 'border-box';
+  recordBtn.style.display = 'flex';
+  recordBtn.style.justifyContent = 'center';
+  recordBtn.style.alignItems = 'center';
+  recordBtn.innerHTML = `<svg width="24px" height="24px" viewbox="0 0 24 24" fill="none" transform="rotate(0)"> <g id="SVGRepo_bgCarrier" stroke-width="0"/> <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"/><g id="SVGRepo_iconCarrier"> <path d="M2 12C2 15.7712 2 17.6569 3.17157 18.8284C4.34315 20 6.22876 20 10 20H14C17.7712 20 19.6569 20 20.8284 18.8284C22 17.6569 22 15.7712 22 12C22 8.22876 22 6.34315 20.8284 5.17157C19.6569 4 17.7712 4 14 4H10C6.22876 4 4.34315 4 3.17157 5.17157C2.51839 5.82475 2.22937 6.69989 2.10149 8" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> <path d="M10 16H6" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> <path d="M14 13H18" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> <path d="M14 16H12.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> <path d="M9.5 13H11.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> <path d="M18 16H16.5" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> <path d="M6 13H7" stroke="#ffffff" stroke-width="1.5" stroke-linecap="round"/> </g></svg>`;
   return recordBtn;
 }
 
