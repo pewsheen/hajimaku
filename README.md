@@ -1,10 +1,10 @@
 # Hajimaku
 
-For language learning purpose. Simple realtime transcript chrome extension for youtube live stream.
+For language learning purposes. Simple real-time transcript Chrome extension for YouTube live stream. Hajimaru Hajimaru!!
 
-This project is using `SpeechRecognition` WebAPI to recongnize and transcript, which means it's using your operating system's recongition feature.
+```Support Japanese only.```
 
-Hajimaru Hajimaru!!
+This project is using `SpeechRecognition` WebAPI to recognize and transcribe, which means it's using your operating system's recognition feature.
 
 ### Requirements:
 - Reroute your audio output to microphone input (I'm using [VB-Cable](https://vb-audio.com/Cable/))
@@ -16,9 +16,9 @@ pnpm install
 pnpm build
 ```
 
-In Chrome Extension page, load `dist` directory that generated after we ran `pnpm build`.
+In Chrome Extension page, load `dist` directory that was generated after we ran `pnpm build`.
 
 ### Roadmap:
-- Inject switch into youtube's control panel
+- Inject switch into YouTube's control panel
 - Popup window to adjust transcriptor's options
 - Translation using Google or OpenAI (by providing API key)
