@@ -1,10 +1,12 @@
 # Hajimaku
 
-For language learning purposes. Simple real-time transcript Chrome extension for YouTube live stream. Hajimaru Hajimaru!!
+**>> WORK IN PROGESS <<**
 
-`Support Japanese only.`
+For language learning purposes. Simple real-time transcript Chrome extension for YouTube live stream. Hajimaru Hajimaru 🦆🦆🦆 !!
 
-This project is using `SpeechRecognition` WebAPI to recognize and transcribe, which means it's using your operating system's recognition feature.
+`Currently support Japanese only.`
+
+Inspired by [jimakuChan](https://github.com/sayonari/jimakuChan). This project use `SpeechRecognition` WebAPI to recognize and transcribe, which means it's using your operating system's recognition feature.
 
 ### Requirements:
 
