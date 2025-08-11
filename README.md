@@ -11,12 +11,8 @@ This project is using `SpeechRecognition` WebAPI to recognize and transcribe, wh
 - Chrome 139+ (first version supporting `SpeechRecognition` WebAPI)
 
 ### How to use:
-```
-pnpm install
-pnpm build
-```
 
-In Chrome Extension page, load `dist` directory that was generated after we ran `pnpm build`.
+In Chrome Extension page, load `public` directory that was generated after we ran `pnpm build`.
 
 ### Roadmap:
 - Inject switch into YouTube's control panel
