@@ -3,7 +3,7 @@
 let isRecording = false;
 
 if (recognition === undefined) {
-  var recognition = new SpeechRecognition();
+  var recognition = new SpeechRecognition() || new webkitSpeechRecognition();
 }
 recognition.lang = 'ja';
 recognition.interimResults = true;
@@ -22,55 +22,31 @@ recognition.onresult = async function (event) {
   }
 
   // console.log(transcript, isFinal);
-
-  const playerEl = document.getElementById('movie_player');
-  if (playerEl) {
-    const transcriptEl = document.getElementById('hajimaru-jimaku');
-    if (transcriptEl) {
-      if (transcript === '') {
-        transcriptEl.style.display = 'none';
-      } else {
-        transcriptEl.style.display = 'block';
-      }
-      transcriptEl.textContent = transcript;
-    } else {
-      const containerEl = createTranscriptElement(transcript);
-      const playerBottomEl =
-        document.getElementsByClassName('ytp-chrome-bottom')[0];
-      if (playerBottomEl) {
-        playerEl.insertBefore(containerEl, playerBottomEl);
-      } else {
-        playerEl.appendChild(containerEl);
-      }
-    }
-  }
+  removeTranscriptElement();
+  insertTranscriptElement(transcript);
 };
 
 recognition.onend = function () {
   // console.log('[Hajimaku] Speech recognition ended');
-  setTimeout(() => {
-    recognition.abort();
-    if (isRecording) {
-      recognition.start();
-    }
-  }, 100);
+  if (isRecording) {
+    recognition.start();
+  }
 };
 
 /* Inject record button */
 
 const toggleBtn = createToggleButtonElement();
-
 toggleBtn.addEventListener('click', () => {
+  isRecording = !isRecording;
   if (isRecording) {
-    // console.log('[Hajimaku] Stopping recognition...');
-    toggleBtn.style.color = 'rgba(255, 255, 255, .4)';
-    recognition.abort();
-  } else {
     // console.log('[Hajimaku] Start recognizing...');
     toggleBtn.style.color = 'rgba(255, 255, 255, 1)';
-    recognition.start();
+    startRecognition();
+  } else {
+    // console.log('[Hajimaku] Stopping recognition...');
+    toggleBtn.style.color = 'rgba(255, 255, 255, .4)';
+    stopRecognition();
   }
-  isRecording = !isRecording;
 });
 
 const controlPanelEl = document.getElementsByClassName(
@@ -80,6 +56,27 @@ if (controlPanelEl) {
   controlPanelEl.appendChild(toggleBtn);
 } else {
   document.body.appendChild(toggleBtn);
+}
+
+function insertTranscriptElement(transcript) {
+  const playerEl = document.getElementById('movie_player');
+  if (playerEl) {
+    const containerEl = createTranscriptElement(transcript);
+    const playerBottomEl =
+      document.getElementsByClassName('ytp-chrome-bottom')[0];
+    if (playerBottomEl) {
+      playerEl.insertBefore(containerEl, playerBottomEl);
+    } else {
+      playerEl.appendChild(containerEl);
+    }
+  }
+}
+
+function removeTranscriptElement() {
+  const containerEl = document.getElementById('hajimaru-jimaku-container');
+  if (containerEl) {
+    containerEl.remove();
+  }
 }
 
 function createTranscriptElement(transcript) {
@@ -140,9 +137,18 @@ const debouncer = function (fn, delay = 1000) {
 };
 
 const clearScript = debouncer(() => {
-  const transcriptEl = document.getElementById('hajimaru-jimaku');
-  if (transcriptEl) {
-    transcriptEl.textContent = '';
-    transcriptEl.style.display = 'none';
-  }
+  removeTranscriptElement();
 }, 3000);
+
+function startRecognition() {
+  isRecording = true;
+  setTimeout(() => {
+    recognition.start();
+  }, 100);
+}
+
+function stopRecognition() {
+  isRecording = false;
+  recognition.abort();
+  removeTranscriptElement();
+}
