@@ -1,5 +1,5 @@
 (() => {
-  // Prevent duplicate init
+  // YouTube is SPA, we need prevent duplicated element injection
   if (document.documentElement.dataset.hajimakuInjected) return;
   document.documentElement.dataset.hajimakuInjected = '1';
 
@@ -19,23 +19,27 @@
 
   let isRecording = false;
 
+  // --- URL change observer (YouTube SPA) ---
+  window.addEventListener('yt-navigate-start', () => {
+    if (isRecording) {
+      stopRecognition();
+    }
+  });
+
   // --- Toggle creation ---
   const toggleBtn = createToggleButtonElement();
   toggleBtn.addEventListener('click', () => {
-    isRecording = !isRecording;
     if (isRecording) {
-      toggleBtn.style.color = 'rgba(255, 255, 255, 1)';
-      startRecognition();
-    } else {
-      toggleBtn.style.color = 'rgba(255, 255, 255, .4)';
       stopRecognition();
+    } else {
+      startRecognition();
     }
   });
   attachToggle(toggleBtn);
 
   // --- Recognition events ---
   recognition.onresult = (event) => {
-    clearScript();
+    scheduleClearTranscript();
     let transcript = event.results[0][0].transcript;
     if (!event.results[0].isFinal) transcript = `"${transcript}"`;
     removeTranscriptElement();
@@ -49,12 +53,14 @@
   function startRecognition() {
     isRecording = true;
     recognition.start();
+    toggleBtn.style.color = 'rgba(255, 255, 255, 1)';
   }
 
   function stopRecognition() {
     isRecording = false;
     recognition.abort();
     removeTranscriptElement();
+    toggleBtn.style.color = 'rgba(255, 255, 255, .4)';
   }
 
   function attachToggle(btn) {
@@ -62,7 +68,7 @@
       'ytp-chrome-controls'
     )[0];
     if (controlPanelEl) controlPanelEl.appendChild(btn);
-    else document.body.appendChild(btn);
+    else console.warn('[Hajimaku] Control panel not found.');
   }
 
   function insertTranscriptElement(transcript) {
@@ -133,7 +139,8 @@
     };
   }
 
-  function clearScript() {
-    debouncer(() => removeTranscriptElement(), 3000);
-  }
+  const scheduleClearTranscript = debouncer(
+    () => removeTranscriptElement(),
+    3000
+  );
 })();
