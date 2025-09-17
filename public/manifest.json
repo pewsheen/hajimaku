@@ -3,15 +3,28 @@
   "description": "Real-time transcription for YouTube",
   "version": "1.0",
   "manifest_version": 3,
-  "permissions": ["tabs", "scripting"],
+  "permissions": [
+    "tabs",
+    "scripting",
+    "storage"
+  ],
   "content_scripts": [
     {
-      "js": ["content.js"],
-      "matches": ["https://www.youtube.com/watch?v=*"]
+      "js": [
+        "content.js"
+      ],
+      "matches": [
+        "https://www.youtube.com/watch?v=*"
+      ]
     }
   ],
   "background": {
     "service_worker": "background.js"
   },
-  "host_permissions": ["https://www.youtube.com/*"]
+  "host_permissions": [
+    "https://www.youtube.com/*"
+  ],
+  "action": {
+    "default_popup": "index.html"
+  }
 }

@@ -19,12 +19,63 @@
 
   let isRecording = false;
 
+  // Keep last-known options for UI/logic;
+  let options = {
+    language: 'ja',
+  };
+
+  // Load initial options from storage
+  try {
+    chrome.storage?.sync.get(['hajimakuOptions'], (res) => {
+      if (chrome.runtime?.lastError) {
+        console.warn('[Hajimaku] storage get error:', chrome.runtime.lastError);
+        return;
+      }
+      const stored = res?.hajimakuOptions;
+      if (stored && typeof stored === 'object') {
+        options = { ...options, ...stored };
+        recognition.lang = options.language;
+      }
+    });
+  } catch (_) {}
+
   // --- URL change observer (YouTube SPA) ---
   window.addEventListener('yt-navigate-start', () => {
     if (isRecording) {
       stopRecognition();
     }
   });
+
+  // Listen for messages from popup to update options or execute commands
+  try {
+    chrome.runtime?.onMessage.addListener((message, _sender, sendResponse) => {
+      if (!message || typeof message !== 'object') return;
+
+      const { type, payload } = message;
+      switch (type) {
+        case 'hajimaku:setOptions': {
+          const next = { ...options, ...(payload || {}) };
+          const prevLang = options.language;
+          const nextLang = next.language;
+          options = next;
+          recognition.lang = nextLang;
+          if (isRecording && prevLang !== nextLang) {
+            console.debug(
+              `[Hajimaku] Language changed: ${prevLang} -> ${nextLang}`
+            );
+            stopRecognition();
+            setTimeout(() => startRecognition(), 500);
+          }
+          sendResponse?.({ ok: true });
+          break;
+        }
+        default:
+          break;
+      }
+
+      return true;
+    });
+  } catch (_) {}
 
   // --- Toggle creation ---
   const toggleBtn = createToggleButtonElement();
